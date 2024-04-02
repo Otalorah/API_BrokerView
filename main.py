@@ -5,7 +5,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import users
 
+from dotenv import load_dotenv
+
 app = FastAPI()
+
+load_dotenv()
  
 app.add_middleware(
     CORSMiddleware,

@@ -6,7 +6,7 @@ from . import models, schemas
 
 crypt = CryptContext(schemes=["bcrypt"])
 
-def get_user(db: Session, username: str):
+def get_user(db: Session, username: str) -> models.User | None:
     return db.query(models.User).filter(models.User.username == username).first()
 
 def verify_password(db: Session, username: str, password: str) -> bool:
@@ -15,7 +15,7 @@ def verify_password(db: Session, username: str, password: str) -> bool:
         return True
     return False
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserCreate) -> None:
     hashed_password = bcrypt.hash(user.password)
     db_user = models.User(username=user.username,
                           hashed_password=hashed_password,
@@ -23,4 +23,3 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
