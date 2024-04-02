@@ -1,11 +1,14 @@
 from jose import jwt, JWTError
 
 from os import getenv
+from dotenv import load_dotenv
 
 from datetime import datetime, timedelta, UTC
 
-SECRET = str(getenv("SECRET"))
-ALGORITHM = "HS256"
+load_dotenv()
+
+SECRET = getenv("SECRET")
+ALGORITHM = getenv("ALGORITHM")
 ACCESS_TOKEN_DURATION = 1
 
 
