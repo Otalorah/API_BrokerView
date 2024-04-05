@@ -1,39 +1,26 @@
-from fastapi import Depends, APIRouter, HTTPException, status, Response, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+
+from typing import Annotated
 
 from sqlalchemy.orm import Session
 from db import crud, schemas
-from db.database import SessionLocal, engine, Base
+from db.database import engine, Base
 
-from passlib.context import CryptContext
+from lib.functions_jwt import create_token, aut_user
+from lib.functions_db import get_db
 
-from lib.functions_jwt import Write_token, Verify_token
 
 Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
-Oauth2 = OAuth2PasswordBearer(tokenUrl="login")
-
-crypt = CryptContext(schemes=["bcrypt"])
-
-# Dependencies
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # - - - - - - - - - - - - - - - - - - - - - - - -  - ENDPOINTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Create User in database
 
 
 @router.post("/create", response_model=dict, status_code=status.HTTP_201_CREATED)
-def create_user(response: Response, user: schemas.UserCreate, db: Session = Depends(get_db)) -> dict:
+def create_user(user: schemas.UserCreate, db: Annotated[Session, Depends(get_db)]) -> dict:
 
     db_user = crud.get_user(db, username=user.username)
 
@@ -43,51 +30,37 @@ def create_user(response: Response, user: schemas.UserCreate, db: Session = Depe
 
     crud.create_user(db, user)
 
-    token = Write_token(user.username)
+    token = create_token(user.username)
 
-    # Create cookie
-
-    response.set_cookie(key="jwt", value=token, httponly=True)
-
-    return {"message": "User created", "redirect": "/inicio"}
+    return {"redirect": "/inicio", "token": token}
 
 # Login the user with database
 
 
 @router.post("/login", response_model=dict, status_code=status.HTTP_200_OK)
-def login(response: Response, form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> dict:
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]) -> dict:
 
     def exception(str): return HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST, detail=str)
 
-    db_user = crud.get_user(db, username=form.username)
+    db_user = crud.get_user(db, username=form_data.username)
 
     if not db_user:
         raise exception("The user doesn't exist")
 
-    if not crud.verify_password(db, form.username, form.password):
+    if not crud.verify_password(db, form_data.username, form_data.password):
         raise exception("The password isn't correct")
 
-    token = Write_token(form.username)
+    token = create_token(form_data.username)
 
-    # Create cookie
-
-    response.set_cookie(key="jwt", value=token, httponly=True)
-
-    return {"message": "login succesful"}
+    return {"redirect": "/inicio", "token": token}
 
 # Get the User with a token
 
 
-@router.get("/", response_model=schemas.UserBase)
-def get_user(request: Request, db: Session = Depends(get_db)) -> schemas.UserBase:
+@router.get("/", response_model=schemas.User)
+def get_user(username: Annotated[None, Depends(aut_user)], db: Session = Depends(get_db)) -> schemas.UserBase:
 
-    user_validate = Verify_token(request.cookies.get("jwt"), output=True)
-
-    if not user_validate:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-    db_user = crud.get_user(db, username=user_validate)
+    db_user = crud.get_user(db, username=username)
 
     return db_user
