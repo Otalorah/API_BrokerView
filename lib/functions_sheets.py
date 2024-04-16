@@ -1,6 +1,11 @@
 from fastapi import HTTPException
 
+from passlib.context import CryptContext
+from passlib.hash import bcrypt
+
 from models import models
+
+from lib.functions_text import get_first_word
 
 from lib.google_sheet_class import GoogleSheet
 
@@ -10,15 +15,7 @@ SHEET_NAME = "Usuarios"
 
 google = GoogleSheet(file_name=CREDENTIALS_FILE, document=DOCUMENT, sheet_name=SHEET_NAME)
 
-
-def get_first_word(text: str) -> str:
-
-    if not ' ' in text:
-        return text.capitalize()
-
-    for i, letter in enumerate(text):
-        if letter == ' ':
-            return text[:i].capitalize()
+crypt = CryptContext(schemes=["bcrypt"])
 
 # - - - - - - - - - - - - - - - - - - - - - Funtions Google Sheets - - - - - - - - - - - - - - - - - - - - -
 
@@ -53,6 +50,12 @@ def create_user_sheet(user:models.UserCreate) -> tuple[str,bool,bool]:
 
     user_has_broker, user_has_fondo = verify_user(name_sheet_user)
 
+    # The user is verify
+
+    hashed_password = bcrypt.hash(user.password)
+
+    user_dict['password'] = hashed_password
+
     user_data = [valor for valor in user_dict.values()]
     user_data.append(user_has_fondo)
     user_data.append(user_has_broker)
@@ -63,3 +66,15 @@ def create_user_sheet(user:models.UserCreate) -> tuple[str,bool,bool]:
     google.write_data(range=range, values=user_values)
 
     return user_dict["username"], user_has_broker, user_has_fondo
+
+def get_data_user_sheet(username:str) -> bool | list :
+    return google.get_data_by_username(username=username)
+
+def verify_password(username:str, password:str) -> bool:
+
+    list_data_user = get_data_user_sheet(username=username)
+    password_in_sheet = list_data_user[4]
+
+    if bcrypt.verify(password, password_in_sheet):
+        return True
+    return False

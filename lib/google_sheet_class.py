@@ -29,6 +29,17 @@ class GoogleSheet:
         # Update the row with the specified values
         self.sheet.update(f"A{row_index}:E{row_index}", values)
 
+    def get_data_by_username(self, username: str) -> bool | list :
+
+        cell = self.sheet.find(username)
+
+        if not cell:
+            return False
+        
+        cell_row = cell.row
+        data_found = self.sheet.row_values(row=cell_row)[:7]
+        return data_found
+
     def get_last_row_range(self) -> str:
         last_row = len(self.sheet.col_values(1)) + 1
         range_start = f"A{last_row}"
