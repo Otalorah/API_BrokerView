@@ -30,13 +30,18 @@ class GoogleSheet:
         self.sheet.update(f"A{row_index}:E{row_index}", values)
 
     def get_last_row_range(self) -> str:
-        last_row = len(self.sheet.get_all_values()) + 1
-        deta = self.sheet.get_values()
+        last_row = len(self.sheet.col_values(1)) + 1
         range_start = f"A{last_row}"
-        range_end = f"{chr(ord('A') + len(deta[0]) - 1)}{last_row}"
+        range_end = f"G{last_row}"
         return f"{range_start}:{range_end}"
 
     def get_all_values(self) -> list[dict]:
         # self.sheet.get_all_values () # this return a list of list, so the get all records is easier to get values filtering
         # this return a list of dictioraies so the key is the name column and the value is the value for that particular column
         return self.sheet.get_all_records()
+
+    def get_values_list_fondo(self) -> list:
+        return self.sheet.col_values(10)
+    
+    def get_values_list_broker(self) -> list:
+        return self.sheet.col_values(9)

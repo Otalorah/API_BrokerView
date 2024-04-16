@@ -17,16 +17,17 @@ router = APIRouter()
 @router.post("/create",response_model=dict, status_code=status.HTTP_201_CREATED)
 def create_user(user: models.UserCreate):
 
-    username = create_user_sheet(user)
+    username, has_broker, has_fondo = create_user_sheet(user)
 
-    token = create_token(username)
+    token = create_token(
+        username=username, has_broker=has_broker, has_fondo=has_fondo)
 
     return {"redirect": "/inicio", "access_token": token}
 
 # Login the user with database
 
 
-@router.post("/login", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK)
 def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> dict:
 
     def exception(str): return HTTPException(
@@ -40,9 +41,9 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> dict:
     # if not crud.verify_password(db, form_data.username, form_data.password):
     #     raise exception("The password isn't correct")
 
-    token = create_token(form_data.username)
+    # token = create_token(form_data.username)
 
-    return {"redirect": "/inicio", "token": token}
+    return form_data
 
 # Get the User with a token
 
