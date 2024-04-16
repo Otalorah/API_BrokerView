@@ -3,4 +3,5 @@ env
 Broker_view.db
 db/__pycache__
 routers/__pycache__
+api-brokerview-45ca1238bc25.json
 .env

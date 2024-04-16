@@ -19,15 +19,18 @@ ACCESS_TOKEN_DURATION = 3
 Oauth2 = OAuth2PasswordBearer(tokenUrl="login")
 
 class Token(BaseModel):
-    access_token: str
+    token: str
     token_type: str = 'bearer'
 
-def create_token(username: str) -> Token:
-    expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_DURATION)
-    content = {"sub": username, "exp": expire}
-    access_token = jwt.encode(content, SECRET, algorithm=ALGORITHM)
 
-    return Token(access_token=access_token)
+def create_token(username: str, has_broker: bool, has_fondo: bool) -> Token:
+    
+    expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_DURATION)
+    content = {"sub": username, "broker": has_broker,
+               "fondo": has_fondo, "exp": expire}
+    token = jwt.encode(content, SECRET, algorithm=ALGORITHM)
+
+    return Token(token=token)
 
 
 async def aut_user(token: str = Depends(Oauth2)) -> str | None:
