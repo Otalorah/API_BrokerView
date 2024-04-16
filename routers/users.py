@@ -3,53 +3,42 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from typing import Annotated
 
-from sqlalchemy.orm import Session
-from db import crud, schemas
-from db.database import engine, Base
+from models import models
 
 from lib.functions_jwt import create_token, aut_user
-from lib.functions_db import get_db
-
-
-Base.metadata.create_all(bind=engine)
+from lib.functions_sheets import create_user_sheet
 
 router = APIRouter()
 
-# - - - - - - - - - - - - - - - - - - - - - - - -  - ENDPOINTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - ENDPOINTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create User in database
 
 
-@router.post("/create", response_model=dict, status_code=status.HTTP_201_CREATED)
-def create_user(user: schemas.UserCreate, db: Annotated[Session, Depends(get_db)]) -> dict:
+@router.post("/create",response_model=dict, status_code=status.HTTP_201_CREATED)
+def create_user(user: models.UserCreate):
 
-    db_user = crud.get_user(db, username=user.username)
+    username = create_user_sheet(user)
 
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="The user exist")
+    token = create_token(username)
 
-    crud.create_user(db, user)
-
-    token = create_token(user.username)
-
-    return {"redirect": "/inicio", "token": token}
+    return {"redirect": "/inicio", "access_token": token}
 
 # Login the user with database
 
 
 @router.post("/login", response_model=dict, status_code=status.HTTP_200_OK)
-def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]) -> dict:
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> dict:
 
     def exception(str): return HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST, detail=str)
 
-    db_user = crud.get_user(db, username=form_data.username)
+    # db_user = crud.get_user(db, username=form_data.username)
 
-    if not db_user:
-        raise exception("The user doesn't exist")
+    # if not db_user:
+    #     raise exception("The user doesn't exist")
 
-    if not crud.verify_password(db, form_data.username, form_data.password):
-        raise exception("The password isn't correct")
+    # if not crud.verify_password(db, form_data.username, form_data.password):
+    #     raise exception("The password isn't correct")
 
     token = create_token(form_data.username)
 
@@ -58,9 +47,9 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annota
 # Get the User with a token
 
 
-@router.get("/", response_model=schemas.User)
-def get_user(username: Annotated[None, Depends(aut_user)], db: Session = Depends(get_db)) -> schemas.UserBase:
+@router.get("/", response_model=models.User)
+def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
 
-    db_user = crud.get_user(db, username=username)
+    # db_user = crud.get_user(db, username=username)
 
-    return db_user
+    return username
