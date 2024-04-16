@@ -42,7 +42,8 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     if not verify_password(form_data.username, form_data.password):
         raise exception("La contraseña no es correcta")
 
-    has_broker, has_fondo = transform_to_bool(db_user[5]), transform_to_bool(db_user[6])
+    has_broker, has_fondo = transform_to_bool(
+        db_user['has_broker']), transform_to_bool(db_user['has_fondo'])
 
     token = create_token(username=form_data.username,
                          has_broker=has_broker, has_fondo=has_fondo)
@@ -52,9 +53,6 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 # Get the User with a token
 
 
-@router.get("/")
-def get_user(username: Annotated[None, Depends(aut_user)]):
-
-    # db_user = crud.get_user(db, username=username)
-
-    return username
+@router.get("/", response_model=models.UserBase, status_code=status.HTTP_200_OK)
+def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
+    return get_data_user_sheet(username=username)

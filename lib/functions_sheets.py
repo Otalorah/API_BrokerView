@@ -67,13 +67,22 @@ def create_user_sheet(user:models.UserCreate) -> tuple[str,bool,bool]:
 
     return user_dict["username"], user_has_broker, user_has_fondo
 
+
 def get_data_user_sheet(username:str) -> bool | list :
-    return google.get_data_by_username(username=username)
+
+    list_data = google.get_data_by_username(username=username)
+
+    list_fields = ['username', 'name', 'lastname',
+                   'email', 'password', 'has_fondo', 'has_broker']
+    dict_data = dict(zip(list_fields, list_data))
+
+    return dict_data
+
 
 def verify_password(username:str, password:str) -> bool:
 
     list_data_user = get_data_user_sheet(username=username)
-    password_in_sheet = list_data_user[4]
+    password_in_sheet = list_data_user['password']
 
     if bcrypt.verify(password, password_in_sheet):
         return True
