@@ -14,7 +14,7 @@ load_dotenv()
 
 SECRET = getenv("SECRET")
 ALGORITHM = getenv("ALGORITHM")
-ACCESS_TOKEN_DURATION = 3
+ACCESS_TOKEN_DAYS_DURATION = 1
 
 Oauth2 = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -25,7 +25,7 @@ class Token(BaseModel):
 
 def create_token(username: str, has_broker: bool, has_fondo: bool) -> Token:
     
-    expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_DURATION)
+    expire = datetime.now(UTC) + timedelta(days=ACCESS_TOKEN_DAYS_DURATION)
     content = {"sub": username, "broker": has_broker,
                "fondo": has_fondo, "exp": expire}
     token = jwt.encode(content, SECRET, algorithm=ALGORITHM)
@@ -48,3 +48,19 @@ async def aut_user(token: str = Depends(Oauth2)) -> str | None:
         raise exception
 
     return username
+
+async def aut_token(token: str = Depends(Oauth2)) -> dict[str] | None:
+
+    exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                              detail="No autorizado",
+                              headers={"WWW-Aunthenticate": "Bearer"})
+
+    try:
+        token_decode = jwt.decode(token, SECRET, algorithms=ALGORITHM)
+    except JWTError:
+        raise exception
+    
+    if token_decode is None:
+        raise exception
+
+    return token_decode
