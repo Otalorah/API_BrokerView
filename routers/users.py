@@ -6,7 +6,7 @@ from typing import Annotated
 from models import models
 
 from lib.functions_text import transform_to_bool
-from lib.functions_jwt import create_token, aut_user
+from lib.functions_jwt import create_token, aut_user, aut_token
 from lib.functions_sheets import create_user_sheet, get_data_user_sheet, verify_password
 
 router = APIRouter()
@@ -56,3 +56,7 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 @router.get("/", response_model=models.UserBase, status_code=status.HTTP_200_OK)
 def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
     return get_data_user_sheet(username=username)
+
+@router.get("/token", status_code=status.HTTP_200_OK)
+def get_user(token: Annotated[None, Depends(aut_token)]):
+    return token
