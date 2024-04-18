@@ -7,7 +7,7 @@ from models import models
 
 from lib.functions_text import get_first_word
 
-from lib.google_sheet_class import GoogleSheet
+from google_sheets.google_sheet_class import GoogleSheet
 
 CREDENTIALS_FILE = "api-brokerview-45ca1238bc25.json"
 DOCUMENT = "Usuarios BrokerView"
@@ -71,6 +71,8 @@ def create_user_sheet(user:models.UserCreate) -> tuple[str,bool,bool]:
 def get_data_user_sheet(username:str) -> bool | list :
 
     list_data = google.get_data_by_username(username=username)
+
+    if not list_data: return False
 
     list_fields = ['username', 'name', 'lastname',
                    'email', 'password', 'has_fondo', 'has_broker']
