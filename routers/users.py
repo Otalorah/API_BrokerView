@@ -57,14 +57,9 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
     return get_data_user_sheet(username=username)
 
-<<<<<<< HEAD
 # Get the value token with a token
 
 
-@router.get("/token",response_model=dict[str], status_code=status.HTTP_200_OK)
+@router.get("/token",response_model=dict, status_code=status.HTTP_200_OK)
 def get_token(token: Annotated[None, Depends(aut_token)]) -> dict[str]:
-=======
-@router.get("/token",response_model=dict[str], status_code=status.HTTP_200_OK)
-def get_user(token: Annotated[None, Depends(aut_token)]) -> dict[str]:
->>>>>>> 3f44dc2b4687b7e24567d9d6891a5459dccd5523
     return token
