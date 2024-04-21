@@ -23,11 +23,11 @@ class Token(BaseModel):
     token_type: str = 'bearer'
 
 
-def create_token(username: str, has_broker: bool, has_fondo: bool) -> Token:
+def create_token(username: str, has_broker: bool, has_fund: bool, user_sheet: str) -> Token:
     
     expire = datetime.now(UTC) + timedelta(days=ACCESS_TOKEN_DAYS_DURATION)
     content = {"sub": username, "broker": has_broker,
-               "fondo": has_fondo, "exp": expire}
+               "fund": has_fund, "user_sheet": user_sheet, "exp": expire}
     token = jwt.encode(content, SECRET, algorithm=ALGORITHM)
 
     return Token(token=token)

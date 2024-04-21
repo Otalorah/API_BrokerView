@@ -1,10 +1,14 @@
 import gspread
 
-class GoogleSheet:
-    def __init__(self, file_name, document, sheet_name):
-        self.gc = gspread.service_account(filename=file_name)
-        self.sh = self.gc.open(document)
-        self.sheet = self.sh.worksheet(sheet_name)
+CREDENTIALS_FILE = "api-brokerview-45ca1238bc25.json"
+DOCUMENT = "Usuarios BrokerView"
+SHEET_NAME = "Usuarios"
+
+class GoogleSheet_users:
+    def __init__(self):
+        self.gc = gspread.service_account(filename=CREDENTIALS_FILE)
+        self.sh = self.gc.open(DOCUMENT)
+        self.sheet = self.sh.worksheet(SHEET_NAME)
 
     def write_data(self, range: str, values: list[list]):
         self.sheet.update(range, values)
@@ -24,12 +28,12 @@ class GoogleSheet:
         
         last_row = len(self.sheet.col_values(1)) + 1
         range_start = f"A{last_row}"
-        range_end = f"G{last_row}"
+        range_end = f"H{last_row}"
 
         return f"{range_start}:{range_end}"
 
     def get_values_list_fondo(self) -> list:
-        return self.sheet.col_values(10)
+        return self.sheet.col_values(11)
     
     def get_values_list_broker(self) -> list:
-        return self.sheet.col_values(9)
+        return self.sheet.col_values(10)

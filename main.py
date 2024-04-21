@@ -3,7 +3,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import users
+from routers import users, fund
 
 from dotenv import load_dotenv
 
@@ -21,8 +21,8 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
-
 app.include_router(users.router, prefix="/user", tags=["user"])
+app.include_router(fund.router, prefix="/fund", tags=["fund"])
 
 @app.get("/")
 async def root():

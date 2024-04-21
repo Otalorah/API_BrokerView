@@ -6,6 +6,10 @@ class UserBase(BaseModel):
     lastname: str
     email: str
 
+
+class UserToken(UserBase):
+    user_sheet: str
+
 class UserCreate(UserBase):
     password: str
 
