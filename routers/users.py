@@ -44,9 +44,11 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
     has_broker, has_fund = transform_to_bool(
         db_user['has_broker']), transform_to_bool(db_user['has_fund'])
+    
+    name_user_sheet = db_user['user_sheet']
 
     token = create_token(username=form_data.username,
-                         has_broker=has_broker, has_fund=has_fund)
+                         has_broker=has_broker, has_fund=has_fund,user_sheet=name_user_sheet)
 
     return {"redirect": "/inicio", "access_token": token}
 

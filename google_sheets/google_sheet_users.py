@@ -21,7 +21,7 @@ class GoogleSheet_users:
             return False
         
         cell_row = cell.row
-        data_found = self.sheet.row_values(row=cell_row)[:7]
+        data_found = self.sheet.row_values(row=cell_row)[:8]
         return data_found
 
     def get_last_row_range(self) -> str:
