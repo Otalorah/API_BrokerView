@@ -12,8 +12,8 @@ class GoogleSheet_broker:
 
     def read_first_table(self) -> list[list]:
 
-        if bool(self.sheet.col_values(7)):
-            return self.sheet.get('A2:G13')
+        if not bool(self.sheet.col_values(10)):
+            return self.sheet.get('A2:H13')
 
         return self.sheet.get('A2:F13')
 
