@@ -10,39 +10,26 @@ def delete_empty_fields(data_list: list[list]) -> list[list]:
     return data_list
 
 
-def convert_to_dictionary(table: list[list], table_type: str) -> list[dict]:
+def convert_to_dictionary(table: list[list], table_type: int) -> list[dict]:
 
     table_data = list()
 
-    COLUMNS_NAME_TABLE2 = ['MES', 'INVERSION', 'LOTE', 'GANANCIA BRUTA',
+    columns_name_table = ['MES', 'INVERSION', 'LOTE', 'GANANCIA BRUTA',
                            'GANANCIA NETA', 'COMISION', 'PORCENTAJE GANANCIA', 'RETIROS']
 
-    if table_type == '1':
-        COLUMNS_NAME_TABLE1 = ['MES', 'INVERSION', 'LOTE',
-                               'GANANCIA NETA', 'COMISION', 'PORCENTAJE GANANCIA']
-        for row in table:
-            dict_data = {"AÑO": '2023'}
+    year_table = '2024'
 
-            dict_data.update(dict(zip(COLUMNS_NAME_TABLE1, row)))
+    if table_type == 1:
+        year_table = '2023'
+        columns_name_table = ['MES', 'INVERSION', 'LOTE',
+                              'GANANCIA NETA', 'COMISION', 'PORCENTAJE GANANCIA']
 
-            table_data.append(dict_data)
+    for row in table:
+        dict_data = {"AÑO": year_table}
 
-    elif table_type == '1 only':
-        for row in table:
-            dict_data = {"AÑO": '2024'}
+        dict_data.update(dict(zip(columns_name_table, row)))
 
-            dict_data.update(dict(zip(COLUMNS_NAME_TABLE2, row)))
-
-            table_data.append(dict_data)
-
-    elif table_type == '2':
-
-        for row in table:
-            dict_data = {"AÑO": '2024'}
-
-            dict_data.update(dict(zip(COLUMNS_NAME_TABLE2, row)))
-
-            table_data.append(dict_data)
+        table_data.append(dict_data)
 
     return table_data
 
@@ -55,14 +42,14 @@ def get_data_sheet_broker(sheet_name: str) -> list:
     first_table = delete_empty_fields(first_table)
 
     if not sheet.verify_second_table():
-        return convert_to_dictionary(table=first_table, table_type='1 only')
+        return convert_to_dictionary(table=first_table, table_type=2)
 
-    table1 = convert_to_dictionary(table=first_table, table_type='1')
+    table1 = convert_to_dictionary(table=first_table, table_type=1)
 
     second_table = sheet.read_second_table()
     second_table = delete_empty_fields(second_table)
 
-    table2 = convert_to_dictionary(table=second_table, table_type='2')
+    table2 = convert_to_dictionary(table=second_table, table_type=2)
 
     data_list = table1 + table2
 
