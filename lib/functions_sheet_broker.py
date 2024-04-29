@@ -9,12 +9,13 @@ def delete_empty_fields(data_list: list[list]) -> list[list]:
 
     return data_list
 
+
 def convert_to_dictionary(table: list[list], table_type: int) -> list[dict]:
 
     table_data = list()
 
     columns_name_table = ['mes', 'inversion', 'lote', 'ganacia_bruta',
-                           'ganancia_neta', 'comision', 'porcentaje_ganancia', 'retiros']
+                          'ganancia_neta', 'comision', 'porcentaje_ganancia', 'retiros']
 
     year_table = '2024'
 
@@ -40,7 +41,7 @@ def get_data_sheet(sheet_name: str) -> list:
     first_table = sheet.read_first_table()
     first_table = delete_empty_fields(first_table)
 
-    #If only has one table
+    # If only has one table
     if not sheet.verify_second_table():
         return convert_to_dictionary(table=first_table, table_type=2)
 
