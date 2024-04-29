@@ -9,23 +9,22 @@ def delete_empty_fields(data_list: list[list]) -> list[list]:
 
     return data_list
 
-
 def convert_to_dictionary(table: list[list], table_type: int) -> list[dict]:
 
     table_data = list()
 
-    columns_name_table = ['MES', 'INVERSION', 'LOTE', 'GANANCIA BRUTA',
-                           'GANANCIA NETA', 'COMISION', 'PORCENTAJE GANANCIA', 'RETIROS']
+    columns_name_table = ['mes', 'inversion', 'lote', 'ganacia_bruta',
+                           'ganancia_neta', 'comision', 'porcentaje_ganancia', 'retiros']
 
     year_table = '2024'
 
     if table_type == 1:
         year_table = '2023'
-        columns_name_table = ['MES', 'INVERSION', 'LOTE',
-                              'GANANCIA NETA', 'COMISION', 'PORCENTAJE GANANCIA']
+        columns_name_table = ['mes', 'inversion', 'lote',
+                              'ganancia_neta', 'comision', 'porcentaje_ganancia']
 
     for row in table:
-        dict_data = {"AÑO": year_table}
+        dict_data = {"año": year_table}
 
         dict_data.update(dict(zip(columns_name_table, row)))
 
@@ -34,13 +33,14 @@ def convert_to_dictionary(table: list[list], table_type: int) -> list[dict]:
     return table_data
 
 
-def get_data_sheet_broker(sheet_name: str) -> list:
+def get_data_sheet(sheet_name: str) -> list:
 
     sheet = GoogleSheet_broker(sheet_name=sheet_name)
 
     first_table = sheet.read_first_table()
     first_table = delete_empty_fields(first_table)
 
+    #If only has one table
     if not sheet.verify_second_table():
         return convert_to_dictionary(table=first_table, table_type=2)
 
