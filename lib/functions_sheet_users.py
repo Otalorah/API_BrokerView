@@ -21,18 +21,12 @@ def verify_user(name_sheet_user: str) -> tuple[bool]:
     list_fund = google.get_values_list_fondo()[1:]
     list_broker = google.get_values_list_broker()[1:]
 
-    if not name_sheet_user in list_fund and not name_sheet_user in list_broker:
+    user_has_fund = name_sheet_user in list_fund
+    user_has_broker = name_sheet_user in list_broker
+
+    if not user_has_fund and not user_has_broker:
         raise HTTPException(
             status_code=406, detail='No tiene cuenta en BrokerView')
-
-    user_has_fund = False
-    user_has_broker = False
-
-    if name_sheet_user in list_fund:
-        user_has_fund = True
-
-    if name_sheet_user in list_broker:
-        user_has_broker = True
 
     return user_has_broker, user_has_fund
 
