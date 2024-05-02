@@ -18,15 +18,21 @@ crypt = CryptContext(schemes=["bcrypt"])
 
 def verify_user(name_sheet_user: str) -> tuple[bool]:
 
-    list_fund = google.get_values_list_fondo()[1:]
-    list_broker = google.get_values_list_broker()[1:]
+    users_registered = google.get_users_registered()
+
+    if name_sheet_user in users_registered:
+        raise HTTPException(
+            status_code=406, detail='El usuario ya existe')
+
+    list_fund = google.get_values_list_fondo()
+    list_broker = google.get_values_list_broker()
 
     user_has_fund = name_sheet_user in list_fund
     user_has_broker = name_sheet_user in list_broker
 
     if not user_has_fund and not user_has_broker:
         raise HTTPException(
-            status_code=406, detail='No tiene cuenta en BrokerView')
+            status_code=406, detail='Su nombre no se encuentra registrado')
 
     return user_has_broker, user_has_fund
 
