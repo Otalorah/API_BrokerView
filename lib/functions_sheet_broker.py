@@ -1,10 +1,12 @@
 from google_sheets.google_sheet_broker import GoogleSheet_broker
 
 
-def delete_empty_fields(data_list: list[list]) -> list[list]:
+def delete_empty_fields(data_list: list[list], table_type: int) -> list[list]:
 
     for i, row in enumerate(data_list):
-        if row[1] == " ":
+        if not row[1] == "0" and table_type == 1:
+            return data_list[i:]
+        elif row[1] == " ":
             return data_list[:i]
 
     return data_list
@@ -39,7 +41,7 @@ def get_data_sheet(sheet_name: str) -> list:
     sheet = GoogleSheet_broker(sheet_name=sheet_name)
 
     first_table = sheet.read_first_table()
-    first_table = delete_empty_fields(first_table)
+    first_table = delete_empty_fields(first_table, 1)
 
     # If only has one table
     if not sheet.verify_second_table():
@@ -48,7 +50,7 @@ def get_data_sheet(sheet_name: str) -> list:
     table1 = convert_to_dictionary(table=first_table, table_type=1)
 
     second_table = sheet.read_second_table()
-    second_table = delete_empty_fields(second_table)
+    second_table = delete_empty_fields(second_table, 2)
 
     table2 = convert_to_dictionary(table=second_table, table_type=2)
 
