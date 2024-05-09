@@ -6,7 +6,7 @@ def delete_empty_fields(data_list: list[list], table_type: int) -> list[list]:
     for i, row in enumerate(data_list):
         if not row[1] == "0" and table_type == 1:
             return data_list[i:]
-        elif row[1] == " ":
+        elif row[1] == " " or row[1] == "":
             return data_list[:i]
 
     return data_list
