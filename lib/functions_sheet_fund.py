@@ -10,7 +10,7 @@ def get_data_sheet(sheet_name: str) -> list[list]:
 def convert_to_dictionary(data: list[list]) -> list[dict]:
 
     list_data = list()
-    COLUMNS_NAME = ['fecha_corte', 'aporte', 'fecha_de_aporte',
+    COLUMNS_NAME = ['fecha_corte', 'aporte', 'fecha_aporte',
                     'saldo_anterior', 'rendimientos', 'saldo_actual']
 
     for row in data:
