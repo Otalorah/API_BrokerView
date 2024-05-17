@@ -18,7 +18,7 @@ def convert_to_dictionary(table: list[list], table_type: int) -> list[dict]:
 
     table_data = list()
 
-    columns_name_table = ['mes', 'inversion', 'lote', 'ganacia_bruta',
+    columns_name_table = ['mes', 'inversion', 'lote', 'ganancia_bruta',
                           'ganancia_neta', 'comision', 'porcentaje_ganancia', 'retiros']
 
     year_table = '2024'
