@@ -106,3 +106,7 @@ def verify_code(email: str, code: str) -> None:
     if (not code == google.get_code_email(email)):
         raise HTTPException(
             status_code=406, detail='Código invalido')
+
+
+def write_code_gmail(email: str, code: str):
+    google.write_code_gmail(email=email, code=code)

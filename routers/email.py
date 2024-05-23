@@ -3,7 +3,7 @@ from fastapi import APIRouter, status
 from models import models
 
 from lib.functions_smtp import send_email
-from lib.functions_users import verify_email, verify_code
+from lib.functions_users import verify_email, verify_code, write_code_gmail
 from lib.utils import generate_code
 
 
@@ -20,8 +20,10 @@ async def emails(email: models.EmailUser) -> dict:
 
     verify_email(email)
 
-    code_str = generate_code()
-    send_email(to_email=email, code=code_str)
+    code = generate_code()
+
+    send_email(email=email, code=code)
+    write_code_gmail(email=email, code=code)
 
     return {"message": "Correo enviado correctamente"}
 

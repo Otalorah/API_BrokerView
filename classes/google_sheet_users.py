@@ -11,8 +11,8 @@ class GoogleSheet_users:
         self.sh = self.gc.open(DOCUMENT)
         self.sheet = self.sh.worksheet(SHEET_NAME)
 
-    def write_data(self, range: str, values: list[list]):
-        self.sheet.update(range, values)
+    def write_data(self, range: str, values: list[list]) -> None:
+        self.sheet.update(range_name=range, values=values)
 
     def get_data_by_username(self, username: str) -> bool | list:
 
@@ -21,8 +21,8 @@ class GoogleSheet_users:
         if not cell:
             return False
 
-        cell_row = cell.row
-        return self.sheet.row_values(row=cell_row)[:8]
+        row = cell.row
+        return self.sheet.row_values(row=row)[:8]
 
     def get_last_row_range(self) -> str:
 
@@ -53,3 +53,10 @@ class GoogleSheet_users:
 
         cell_row = cell.row
         return self.sheet.row_values(row=cell_row)[8]
+
+    def write_code_gmail(self, email: str, code: str) -> None:
+
+        cell = self.sheet.find(email)
+        row = cell.row
+
+        self.sheet.update(range_name=f"i{row}", values=[[code]])
