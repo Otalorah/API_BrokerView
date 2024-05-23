@@ -1,4 +1,4 @@
-from google_sheets.google_sheet_broker import GoogleSheet_broker
+from classes.google_sheet_broker import GoogleSheet_broker
 
 
 def delete_empty_fields(data_list: list[list], table_type: int) -> list[list]:

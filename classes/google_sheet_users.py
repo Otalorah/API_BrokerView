@@ -33,11 +33,14 @@ class GoogleSheet_users:
 
         return f"{range_start}:{range_end}"
 
-    def get_values_list_fondo(self) -> list:
+    def get_list_fondo(self) -> list:
         return self.sheet.col_values(11)[1:]
 
-    def get_values_list_broker(self) -> list:
+    def get_list_broker(self) -> list:
         return self.sheet.col_values(10)[1:]
 
     def get_users_registered(self) -> list:
         return self.sheet.col_values(8)[1:]
+    
+    def get_emails(self) -> list:
+        return self.sheet.col_values(4)[1:]

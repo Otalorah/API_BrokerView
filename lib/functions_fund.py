@@ -1,4 +1,4 @@
-from google_sheets.google_sheet_fund import GoogleSheet_fund
+from classes.google_sheet_fund import GoogleSheet_fund
 
 
 def get_data_sheet(sheet_name: str) -> list[list]:

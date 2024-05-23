@@ -5,9 +5,9 @@ from passlib.hash import bcrypt
 
 from models import models
 
-from lib.functions_text import get_first_word
+from lib.utils import get_first_word
 
-from google_sheets.google_sheet_users import GoogleSheet_users
+from classes.google_sheet_users import GoogleSheet_users
 
 google = GoogleSheet_users()
 
@@ -24,8 +24,8 @@ def verify_user(name_sheet_user: str) -> tuple[bool]:
         raise HTTPException(
             status_code=406, detail='El usuario ya existe')
 
-    list_fund = google.get_values_list_fondo()
-    list_broker = google.get_values_list_broker()
+    list_fund = google.get_list_fondo()
+    list_broker = google.get_list_broker()
 
     user_has_fund = name_sheet_user in list_fund
     user_has_broker = name_sheet_user in list_broker
@@ -87,3 +87,10 @@ def verify_password(username: str, password: str) -> bool:
     if bcrypt.verify(password, password_in_sheet):
         return True
     return False
+
+
+def verify_email(email: str) -> None:
+
+    if not email in google.get_emails():
+        raise HTTPException(
+            status_code=406, detail='El correo no se encuentra registrado')

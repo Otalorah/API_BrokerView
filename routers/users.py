@@ -5,9 +5,9 @@ from typing import Annotated
 
 from models import models
 
-from lib.functions_text import transform_to_bool
+from lib.utils import transform_to_bool
 from lib.functions_jwt import create_token, aut_user, aut_token
-from lib.functions_sheet_users import create_user_sheet, get_data_user, verify_password
+from lib.functions_users import create_user_sheet, get_data_user, verify_password
 
 router = APIRouter()
 
@@ -15,8 +15,8 @@ router = APIRouter()
 # Create User in database
 
 
-@router.post("/create",response_model=dict, status_code=status.HTTP_201_CREATED)
-def create_user(user: models.UserCreate):
+@router.post("/create", response_model=dict, status_code=status.HTTP_201_CREATED)
+def create_user(user: models.UserCreate) -> dict:
 
     username, has_broker, has_fund, name_sheet_user = create_user_sheet(user)
 
@@ -28,8 +28,8 @@ def create_user(user: models.UserCreate):
 # Login the user with database
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)
-def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+@router.post("/login", response_model=dict, status_code=status.HTTP_200_OK)
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> dict:
 
     def exception(str): return HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST, detail=str)
@@ -44,11 +44,11 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
     has_broker, has_fund = transform_to_bool(
         db_user['has_broker']), transform_to_bool(db_user['has_fund'])
-    
+
     name_user_sheet = db_user['user_sheet']
 
     token = create_token(username=form_data.username,
-                         has_broker=has_broker, has_fund=has_fund,user_sheet=name_user_sheet)
+                         has_broker=has_broker, has_fund=has_fund, user_sheet=name_user_sheet)
 
     return {"redirect": "/inicio", "access_token": token}
 
@@ -62,6 +62,6 @@ def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
 # Get the value token with a token
 
 
-@router.get("/token",response_model=dict, status_code=status.HTTP_200_OK)
+@router.get("/token", response_model=dict, status_code=status.HTTP_200_OK)
 def get_token(token: Annotated[None, Depends(aut_token)]) -> dict[str]:
     return token

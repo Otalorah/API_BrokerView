@@ -14,3 +14,7 @@ class UserToken(UserBase):
 
 class UserCreate(UserBase):
     password: str
+
+
+class EmailUser(BaseModel):
+    email: str

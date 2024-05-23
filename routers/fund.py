@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, status
 
 from typing import Annotated
 
-from lib.functions_sheet_fund import get_data_sheet, convert_to_dictionary
+from lib.functions_fund import get_data_sheet, convert_to_dictionary
 from lib.functions_jwt import aut_token
 
 router = APIRouter()
