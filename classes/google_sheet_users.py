@@ -22,25 +22,34 @@ class GoogleSheet_users:
             return False
 
         cell_row = cell.row
-        data_found = self.sheet.row_values(row=cell_row)[:8]
-        return data_found
+        return self.sheet.row_values(row=cell_row)[:8]
 
     def get_last_row_range(self) -> str:
 
         last_row = len(self.sheet.col_values(1)) + 1
         range_start = f"A{last_row}"
-        range_end = f"H{last_row}"
+        range_end = f"I{last_row}"
 
         return f"{range_start}:{range_end}"
 
     def get_list_fondo(self) -> list:
-        return self.sheet.col_values(11)[1:]
+        return self.sheet.col_values(12)[1:]
 
     def get_list_broker(self) -> list:
-        return self.sheet.col_values(10)[1:]
+        return self.sheet.col_values(11)[1:]
 
     def get_users_registered(self) -> list:
         return self.sheet.col_values(8)[1:]
-    
+
     def get_emails(self) -> list:
         return self.sheet.col_values(4)[1:]
+
+    def get_code_email(self, email: str) -> list:
+
+        cell = self.sheet.find(email)
+
+        if not cell:
+            return []
+
+        cell_row = cell.row
+        return self.sheet.row_values(row=cell_row)[8]

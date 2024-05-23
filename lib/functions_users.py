@@ -6,6 +6,8 @@ from passlib.hash import bcrypt
 from models import models
 
 from lib.utils import get_first_word
+from lib.functions_smtp import send_email
+from lib.utils import generate_code
 
 from classes.google_sheet_users import GoogleSheet_users
 
@@ -48,14 +50,17 @@ def create_user_sheet(user: models.UserCreate) -> tuple[str, bool, bool]:
 
     # The user is verify
 
-    hashed_password = bcrypt.hash(user.password)
+    code = generate_code()
+    send_email(to_email=user_dict["email"], code=code)
 
+    hashed_password = bcrypt.hash(user.password)
     user_dict['password'] = hashed_password
 
     user_data = [valor for valor in user_dict.values()]
     user_data.append(user_has_fondo)
     user_data.append(user_has_broker)
     user_data.append(name_sheet_user)
+    user_data.append(code)
 
     user_values = [user_data]
 
@@ -94,3 +99,10 @@ def verify_email(email: str) -> None:
     if not email in google.get_emails():
         raise HTTPException(
             status_code=406, detail='El correo no se encuentra registrado')
+
+
+def verify_code(email: str, code: str) -> None:
+
+    if (not code == google.get_code_email(email)):
+        raise HTTPException(
+            status_code=406, detail='Código invalido')

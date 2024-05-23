@@ -23,7 +23,7 @@ def create_user(user: models.UserCreate) -> dict:
     token = create_token(
         username=username, has_broker=has_broker, has_fund=has_fund, user_sheet=name_sheet_user)
 
-    return {"redirect": "/inicio", "access_token": token}
+    return {"redirect": "/password", "access_token": token}
 
 # Login the user with database
 

@@ -18,3 +18,7 @@ class UserCreate(UserBase):
 
 class EmailUser(BaseModel):
     email: str
+
+
+class CodeUser(EmailUser):
+    code: str
