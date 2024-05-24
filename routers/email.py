@@ -25,7 +25,7 @@ async def emails(email: models.EmailUser) -> dict:
     send_email(email=email, code=code)
     write_code_gmail(email=email, code=code)
 
-    return {"redirect": "/inicio"}
+    return {"message": "Correo enviado correctamente"}
 
 
 # Verify code user
