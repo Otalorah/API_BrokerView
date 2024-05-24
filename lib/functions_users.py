@@ -6,8 +6,6 @@ from passlib.hash import bcrypt
 from models import models
 
 from lib.utils import get_first_word
-from lib.functions_smtp import send_email
-from lib.utils import generate_code
 
 from classes.google_sheet_users import GoogleSheet_users
 
@@ -50,9 +48,6 @@ def create_user_sheet(user: models.UserCreate) -> tuple[str, bool, bool]:
 
     # The user is verify
 
-    code = generate_code()
-    send_email(to_email=user_dict["email"], code=code)
-
     hashed_password = bcrypt.hash(user.password)
     user_dict['password'] = hashed_password
 
@@ -60,7 +55,6 @@ def create_user_sheet(user: models.UserCreate) -> tuple[str, bool, bool]:
     user_data.append(user_has_fondo)
     user_data.append(user_has_broker)
     user_data.append(name_sheet_user)
-    user_data.append(code)
 
     user_values = [user_data]
 

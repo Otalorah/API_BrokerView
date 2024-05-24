@@ -28,7 +28,7 @@ class GoogleSheet_users:
 
         last_row = len(self.sheet.col_values(1)) + 1
         range_start = f"A{last_row}"
-        range_end = f"I{last_row}"
+        range_end = f"H{last_row}"
 
         return f"{range_start}:{range_end}"
 
