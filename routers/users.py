@@ -7,7 +7,7 @@ from models import models
 
 from lib.utils import transform_to_bool
 from lib.functions_jwt import create_token_user, aut_user, aut_token
-from lib.functions_users import create_user_sheet, get_data_user, verify_password
+from lib.functions_users import create_user_sheet, get_data_user, verify_password, update_password
 
 router = APIRouter()
 
@@ -66,7 +66,14 @@ def get_user(username: Annotated[None, Depends(aut_user)]) -> models.UserBase:
 def get_token(token: Annotated[None, Depends(aut_token)]) -> dict[str]:
     return token
 
+# Update the password
 
-@router.put("/password")
-def change_password(token: Annotated[None, Depends(aut_token)]):
-    return token["email"]
+
+@router.put("/password", response_model=dict, status_code=status.HTTP_202_ACCEPTED)
+def change_password(password: models.UserPassword, token: Annotated[None, Depends(aut_token)]) -> dict:
+
+    password = dict(password)["password"]
+
+    update_password(email=token["email"], password=password)
+
+    return {"redirect": "/"}

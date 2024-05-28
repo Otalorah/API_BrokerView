@@ -54,9 +54,9 @@ class GoogleSheet_users:
         cell_row = cell.row
         return self.sheet.row_values(row=cell_row)[8]
 
-    def write_code_gmail(self, email: str, code: str) -> None:
+    def write_by_gmail(self, email: str, value: str, column: str) -> None:
 
         cell = self.sheet.find(email)
         row = cell.row
 
-        self.sheet.update(range_name=f"i{row}", values=[[code]])
+        self.sheet.update(range_name=f"{column}{row}", values=[[value]])

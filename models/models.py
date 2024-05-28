@@ -22,3 +22,7 @@ class EmailUser(BaseModel):
 
 class CodeUser(EmailUser):
     code: str
+
+
+class UserPassword(BaseModel):
+    password: str

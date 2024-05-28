@@ -34,7 +34,7 @@ def create_token_user(username: str, has_broker: bool, has_fund: bool, user_shee
     return Token(token=token)
 
 
-def create_token_code(email: str):
+def create_token_code(email: str) -> Token:
 
     expire = datetime.now(UTC) + timedelta(hours=1)
     content = {"email": email, "exp": expire}

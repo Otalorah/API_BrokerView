@@ -88,6 +88,12 @@ def verify_password(username: str, password: str) -> bool:
     return False
 
 
+def update_password(email: str, password: str):
+
+    hashed_password = bcrypt.hash(password)
+    google.write_by_gmail(email=email, value=hashed_password, column="E")
+
+
 def verify_email(email: str) -> None:
 
     if not email in google.get_emails():
@@ -103,4 +109,4 @@ def verify_code(email: str, code: str) -> None:
 
 
 def write_code_gmail(email: str, code: str):
-    google.write_code_gmail(email=email, code=code)
+    google.write_by_gmail(email=email, value=code, column="I")
