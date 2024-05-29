@@ -76,4 +76,4 @@ def change_password(password: models.UserPassword, token: Annotated[None, Depend
 
     update_password(email=token["email"], password=password)
 
-    return {"redirect": "/"}
+    return {"message": "Cambio de contraseña exitoso"}
