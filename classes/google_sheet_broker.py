@@ -1,12 +1,18 @@
 import gspread
+from os import getenv
+from json import loads
+from dotenv import load_dotenv
 
-CREDENTIALS_FILE = "api-brokerview-45ca1238bc25.json"
+load_dotenv()
+
+CREDENTIALS = getenv('GOOGLE')
+CREDENTIALS = loads(CREDENTIALS)
 DOCUMENT = "COPYTRADING"
 
 
 class GoogleSheet_broker:
     def __init__(self, sheet_name: str):
-        self.gc = gspread.service_account(filename=CREDENTIALS_FILE)
+        self.gc = gspread.service_account_from_dict(CREDENTIALS)
         self.sh = self.gc.open(DOCUMENT)
         self.sheet = self.sh.worksheet(sheet_name)
 
