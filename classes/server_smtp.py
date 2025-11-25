@@ -1,37 +1,41 @@
-from smtplib import SMTP_SSL
-
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To, Content
 from os import getenv
 from dotenv import load_dotenv
 
 load_dotenv()
 
-SMTP_USER = getenv('SMTP_USER')
-SMTP_PASSWORD = getenv('SMTP_PASSWORD')
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 465
+SENDGRID_API_KEY = getenv('SENDGRID_API_KEY')
+FROM_EMAIL = getenv('FROM_EMAIL', 'brokerviewes@gmail.com')
 
 
 class ServerSMTP:
-
-    def send_email(self, email, body):
-
-        msg = self.build_message(email, body)
-
-        with SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-            server.ehlo()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, email, msg.as_string())
-
+    def send_email(self, email: str, body: str):
+        """
+        Envía un email usando SendGrid API
+        """
+        try:
+            message = Mail(
+                from_email=Email(FROM_EMAIL),
+                to_emails=To(email),
+                subject='Código de verificación',
+                plain_text_content=Content("text/plain", body)
+            )
+            
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            response = sg.send(message)
+            
+            print(f"✅ Email enviado exitosamente! Status: {response.status_code}")
+            return response
+            
+        except Exception as e:
+            print(f"❌ Error enviando email: {str(e)}")
+            raise e
+    
     @staticmethod
-    def build_message(email, body) -> MIMEMultipart:
-
-        msg = MIMEMultipart()
-        msg['From'] = "brokerviewes@gmail.com"
-        msg['To'] = email
-        msg['Subject'] = "Código de verificación"
-        msg.attach(MIMEText(body, 'plain'))
-
-        return msg
+    def build_message(email, body):
+        """
+        Método mantenido por compatibilidad pero ya no es necesario
+        SendGrid maneja la construcción del mensaje internamente
+        """
+        pass
